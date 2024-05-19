@@ -18,11 +18,13 @@ function element_array = electrod_arrayref(args)
         remd = mod(i,num_pos)==0; % 0 remainder conversion
         ii = mod(i,num_pos) + num_elec*remd; % index for checking rind
         if sum(ii == rind) == 1 % case when ind match with rind
-            element_array(2*i-1)=Raith_element('sref','electrode',[pos(i,:)], 1, rot_ang, 0);
-            element_array(2*i)=Raith_element('sref','electrode',[pos(i,:)], 1, rot_ang, 0);
+            element_array(3*i-2)=Raith_element('sref','Line_scan',[pos(i,:)], 1, rot_ang, 0);
+            element_array(3*i-1)=Raith_element('sref','electrode',[pos(i,:)], 1, rot_ang, 0);
+            element_array(3*i)=Raith_element('sref','electrode',[pos(i,:)], 1, rot_ang, 0);
         else
-            element_array(2*i-1)=Raith_element('sref','electrode',[pos(i,:)], 1, 0, 0);
-            element_array(2*i)=Raith_element('sref','electrode',[pos(i,:)], 1, 0, 0);
+            element_array(3*i-2)=Raith_element('sref','Line_scan',[pos(i,:)], 1, 0, 0);
+            element_array(3*i-1)=Raith_element('sref','electrode',[pos(i,:)], 1, 0, 0);
+            element_array(3*i)=Raith_element('sref','electrode',[pos(i,:)], 1, 0, 0);
         end
     end
 
