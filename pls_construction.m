@@ -7,7 +7,7 @@ function pls_construction(args)
     args.mark_positions (:,2) double
     args.scan_positions (:,2) double
     args.wfield_size (1,1) double
-    args.mark_layer (1,1) double = 63 %63 for manual markscan and 61 for automatic scan
+    args.mark_layer (1,:) double = [60, 63] %63 for manual markscan and 61 for automatic scan, % layer 60 for check marks
     args.scan_layer (1,:) double
     args.num_jj (1,1) double = 1
     args.rot_angle (1,1) double = 90
