@@ -37,10 +37,10 @@ function elec_struct = gen_elec_element(args)
         elec_points = [start_point, elec_points, arm_points]; % combine circle and arm points
     else
         % start point
-        start_point = [arm_length; arm_width/2];
+        start_point = [cut_length_right; arm_width/2];
         %upper points before circle
-        upper_points_before_circle = [arm_length, cut_length_right, cut_length_right, (elec_dia+gap)/2*cos(asin((arm_width+ gap)/(elec_dia+gap)));
-                                        arm_widewidth/2+etch_overlap, arm_widewidth/2+etch_overlap, (arm_width+ gap)/2, (elec_dia+gap)/2*sin(asin((arm_width+ gap)/(elec_dia+gap)))];
+        upper_points_before_circle = [arm_length, arm_length, cut_length_right, cut_length_right, (elec_dia+gap)/2*cos(asin((arm_width+ gap)/(elec_dia+gap)));
+                                        arm_widewidth/2 + etch_overlap/2 ,arm_widewidth/2+etch_overlap, arm_widewidth/2+etch_overlap, (arm_width+ gap)/2, (elec_dia+gap)/2*sin(asin((arm_width+ gap)/(elec_dia+gap)))];
         %upper circle points
         utheta = theta((pi-theta>=asin((arm_width+ gap)/(elec_dia+gap)))==1);
         utheta = utheta((utheta>=asin((arm_width+ gap)/(elec_dia+gap)))==1);
@@ -53,8 +53,8 @@ function elec_struct = gen_elec_element(args)
         ltheta = ltheta((2*pi-ltheta>=asin((arm_width+ gap)/(elec_dia+gap)))==1);
         lower_circle_points = (elec_dia+gap) / 2 * [cos(ltheta); sin(ltheta)];
         %lower points after circle
-        lower_points_after_circle = [(elec_dia+gap)/2 * cos(asin((arm_width+ gap)/(elec_dia+gap))), cut_length_right, cut_length_right, arm_length, arm_length;
-                                        -(elec_dia+gap)/2 * sin(asin((arm_width+ gap)/(elec_dia+gap))), -(arm_width+gap)/2, -arm_widewidth/2- etch_overlap, -arm_widewidth/2- etch_overlap, -arm_width/2];
+        lower_points_after_circle = [(elec_dia+gap)/2 * cos(asin((arm_width+ gap)/(elec_dia+gap))), cut_length_right, cut_length_right, arm_length, arm_length, cut_length_right;
+                                        -(elec_dia+gap)/2 * sin(asin((arm_width+ gap)/(elec_dia+gap))), -(arm_width+gap)/2, -arm_widewidth/2- etch_overlap, -arm_widewidth/2- etch_overlap, -arm_widewidth/2 - etch_overlap/2, -arm_width/2];
         %inner circle points -- this is almost same as not etch case
         intheta = flip(theta);
         inner_circle_points = elec_dia / 2 * [cos(intheta); sin(intheta)];
