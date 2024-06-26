@@ -14,6 +14,7 @@ function [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct].
         junction_args.Jwire_length (1,1) {double,mustBeNonnegative} = 2
         junction_args.wire_width (1,1) {double,mustBeNonnegative} = 2
         junction_args.Joverlap (1,1) {double,mustBeNonnegative} = 2
+        junction_args.pixel_write logical = false
         wfield_args.wfield_jj (1,1) {double,mustBeNonnegative}
         wfield_args.wfield_pad (1,1) {double,mustBeNonnegative}
         option_args.plotedges logical = false
@@ -32,8 +33,11 @@ function [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct].
     else
         extra_strip_message = false;
     end
-    Jwire_name = append('Jwire', num2str(junction_args.Jwire_width * 1e3));
-
+    if junction_args.pixel_write
+        Jwire_name = 'Jwire_pixel';
+    else
+        Jwire_name = append('Jwire', num2str(junction_args.Jwire_width * 1e3));
+    end
     % Position define
         % JunctionPosition define
     clstrip_points=[pad_args.pad_width+pad_args.pad_gap/2-wfield_args.wfield_jj/2,pad_args.pad_height/2-junction_args.wire_width/2;...
@@ -59,14 +63,13 @@ function [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct].
     rstrip_points=[pad_args.pad_width+pad_args.pad_gap/2+wfield_args.wfield_jj/2-junction_args.Joverlap,pad_args.pad_height/2+pad_args.pad_gap/2*0.2;...
                            pad_args.pad_width+pad_args.pad_gap+pad_args.overlap,pad_args.pad_height/2+pad_args.pad_gap/2*0.2+junction_args.wire_width]...
                            +position_offset;
-    
     Jwire1_points=[pad_args.pad_width+pad_args.pad_gap/2-junction_args.Jwire_length-junction_args.Joverlap, pad_args.pad_height/2-junction_args.Jwire_width/2 ;...
-                            pad_args.pad_width+pad_args.pad_gap/2+junction_args.Jwire_width/2+3, pad_args.pad_height/2+junction_args.Jwire_width/2]...
-                            +position_offset;
-     
+                                pad_args.pad_width+pad_args.pad_gap/2+junction_args.Jwire_width/2+3, pad_args.pad_height/2+junction_args.Jwire_width/2]...
+                                +position_offset;
     Jwire2_points=[pad_args.pad_width+pad_args.pad_gap/2-junction_args.Jwire_width/2, pad_args.pad_height/2-junction_args.Jwire_width/2-3;...
-                           pad_args.pad_width+pad_args.pad_gap/2+junction_args.Jwire_width/2, pad_args.pad_height/2+junction_args.Jwire_length+junction_args.Joverlap]...
-                           +position_offset;
+                                pad_args.pad_width+pad_args.pad_gap/2+junction_args.Jwire_width/2, pad_args.pad_height/2+junction_args.Jwire_length+junction_args.Joverlap]...
+                                +position_offset;
+
 
         %Pad position define
     lpad_points=[0,0; pad_args.pad_width, 0; pad_args.pad_width, pad_args.pad_height; 0, pad_args.pad_height; 0,0]+position_offset;
@@ -74,19 +77,38 @@ function [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct].
     +position_offset;
 
     % Raith_element define - Junction wire
-    Jwire1=Raith_element;
-    Jwire1.type='polygon';
-    Jwire1.data.layer=1;
-    Jwire1.data.uv=[Jwire1_points(1,1) Jwire1_points(2,1) Jwire1_points(2,1) Jwire1_points(1,1) Jwire1_points(1,1);...
-        Jwire1_points(1,2) Jwire1_points(1,2) Jwire1_points(2,2) Jwire1_points(2,2) Jwire1_points(1,2)];
-    Jwire1.data.DF=1;
-    
-    Jwire2=Raith_element;
-    Jwire2.type='polygon';
-    Jwire2.data.layer=1;
-    Jwire2.data.uv=[Jwire2_points(1,1) Jwire2_points(2,1) Jwire2_points(2,1) Jwire2_points(1,1) Jwire2_points(1,1);...
-        Jwire2_points(1,2) Jwire2_points(1,2) Jwire2_points(2,2) Jwire2_points(2,2) Jwire2_points(1,2)];
-    Jwire2.data.DF=1;
+    if junction_args.pixel_write
+        Jwire1=Raith_element;
+        Jwire1.type='path';
+        Jwire1.data.layer=1;
+        Jwire1.data.uv=[Jwire1_points(1,1) Jwire1_points(2,1);...
+            (Jwire1_points(1,2) + Jwire1_points(2,2))/2 (Jwire1_points(1,2) + Jwire1_points(2,2))/2];
+        Jwire1.data.w=0;
+        Jwire1.data.DF=1;
+
+        Jwire2=Raith_element;
+        Jwire2.type='path';
+        Jwire2.data.layer=1;
+        Jwire2.data.uv=[(Jwire2_points(1,1) + Jwire2_points(2,1))/2 (Jwire2_points(1,1) + Jwire2_points(2,1))/2;...
+            Jwire2_points(1,2) Jwire2_points(2,2)];
+        Jwire2.data.w=0;
+        Jwire2.data.DF=1;
+
+    else
+        Jwire1=Raith_element;
+        Jwire1.type='polygon';
+        Jwire1.data.layer=1;
+        Jwire1.data.uv=[Jwire1_points(1,1) Jwire1_points(2,1) Jwire1_points(2,1) Jwire1_points(1,1) Jwire1_points(1,1);...
+            Jwire1_points(1,2) Jwire1_points(1,2) Jwire1_points(2,2) Jwire1_points(2,2) Jwire1_points(1,2)];
+        Jwire1.data.DF=1;
+        
+        Jwire2=Raith_element;
+        Jwire2.type='polygon';
+        Jwire2.data.layer=1;
+        Jwire2.data.uv=[Jwire2_points(1,1) Jwire2_points(2,1) Jwire2_points(2,1) Jwire2_points(1,1) Jwire2_points(1,1);...
+            Jwire2_points(1,2) Jwire2_points(1,2) Jwire2_points(2,2) Jwire2_points(2,2) Jwire2_points(1,2)];
+        Jwire2.data.DF=1;
+    end
     
     clstrip=Raith_element;
     clstrip.type='polygon';
