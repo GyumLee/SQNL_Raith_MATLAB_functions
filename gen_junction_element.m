@@ -19,8 +19,10 @@ function [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct].
         wfield_args.wfield_pad (1,1) {double,mustBeNonnegative}
         option_args.plotedges logical = false
         option_args.plot logical = false
+        option_args.name_prefix char = ''
     end
 
+    prefix = option_args.name_prefix;
     junction_center=[0 0]; % DO NOT CHANGE, FIX TO (0,0)
     position_offset=junction_center-[pad_args.pad_width+pad_args.pad_gap/2 pad_args.pad_height/2];
 
@@ -34,10 +36,15 @@ function [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct].
         extra_strip_message = false;
     end
     if junction_args.pixel_write
-        Jwire_name = 'Jwire_pixel';
+        Jwire_name = append(prefix,'Jwire_pixel');
     else
-        Jwire_name = append('Jwire', num2str(junction_args.Jwire_width * 1e3));
+        Jwire_name = append(prefix,'Jwire', num2str(junction_args.Jwire_width * 1e3));
     end
+    lstrip_name = append(prefix,'lstrip');
+    rstrip_name = append(prefix,'rstrip');
+    lpad_name = append(prefix,'lpad');
+    rpad_name = append(prefix,'rpad');
+
     % Position define
         % JunctionPosition define
     clstrip_points=[pad_args.pad_width+pad_args.pad_gap/2-wfield_args.wfield_jj/2,pad_args.pad_height/2-junction_args.wire_width/2;...
@@ -153,17 +160,17 @@ function [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct].
     
     % Raith_struct define
     Jwire_struct=Raith_structure(Jwire_name, [Jwire1, Jwire2 clstrip crstrip]);
-    lstrip_struct=Raith_structure('lstrip',lstrip);
-    rstrip_struct=Raith_structure('rstrip',rstrip);
-    lpad_struct=Raith_structure('lpad', lpad);
-    rpad_struct=Raith_structure('rpad', rpad);
+    lstrip_struct=Raith_structure(lstrip_name, lstrip);
+    rstrip_struct=Raith_structure(rstrip_name, rstrip);
+    lpad_struct=Raith_structure(lpad_name, lpad);
+    rpad_struct=Raith_structure(rpad_name, rpad);
 
     if extra_strip_message
         disp("wfield_jj is large enought to cover the gap between pads.")
         disp("Do not have to use lstrip_struct and rstrip struct.")
         disp(" ")
     end
-    disp("The name of structures are " + Jwire_name + " , lstrip, rstrip, lpad, and rpad")
+    disp("The name of structures are " + Jwire_name + ", " + lstrip_name + ", " + rstrip_name + ", " + lpad_name + ", and " + rpad_name)
 
     struct_array = [Jwire_struct, lstrip_struct, rstrip_struct, lpad_struct, rpad_struct];
     

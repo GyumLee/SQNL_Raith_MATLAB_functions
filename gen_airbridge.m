@@ -2,6 +2,7 @@ function [air_bridge_struct, refstruct_array] = gen_airbridge(args)
     arguments
         args.length (1,1) double {mustBeNumeric} = 40
         args.width (1,1) double {mustBeNumeric} = 5
+        args.angle (1,1) double {mustBeNumeric} = 0
         args.contact_size (1,2) double {mustBeNumeric} = [10, 10]
         args.longdose_length (1,1) double {mustBeNumeric} = 5
         args.transdose_length (1,1) double {mustBeNumeric} = 5

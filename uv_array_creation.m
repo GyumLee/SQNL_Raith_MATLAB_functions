@@ -1,3 +1,10 @@
+% Description
+% This function is for generating uv array.
+% Is usually for gnerating chip position list.
+% Choose the start point, number of columns and raws, and pitch for u and v.
+% Output form is [u1, v1; u2, v2; ...; um, vn]; (# of columns x # of raws) x 2 matrix.
+
+
 function uv_array = uv_array_creation(args)
     arguments
         args.ustart (1,1) double = 0
